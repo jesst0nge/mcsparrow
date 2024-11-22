@@ -15,6 +15,7 @@ class Product(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     stock = models.PositiveIntegerField(default=0)
+    image = models.ImageField(upload_to='uploads/product/', default='')
 
     def quantity_on_hand(self):
         return sum(variant.received_quantity() - variant.sold_quantity() for variant in self.variants.all())
@@ -34,6 +35,9 @@ class ProductVariant(models.Model):
     received_quantity = models.PositiveIntegerField(default=0)
     sold_quantity = models.PositiveIntegerField(default=0)
     date_last_received = models.DateTimeField(default=now)
+    # Add Sale Stuff
+    is_sale = models.BooleanField(default=False)
+    sale_price = models.DecimalField(default=0, decimal_places=2, max_digits=6)
 
     def on_order_quantity(self):
         return max(0, self.initial_quantity - self.received_quantity)
