@@ -23,8 +23,8 @@ if ENVIRONMENT == 'development':
 else:
     DEBUG = False
 
-ALLOWED_HOSTS = ['autorack.proxy.rlwy.net','127.0.0.1']
-
+ALLOWED_HOSTS = ['mcsparrow-production.up.railway.app','127.0.0.1']
+CSRF_TRUSTED_ORIGINS = ['HTTPS://mcsparrow-production.up.railway.app']
 
 # Application definition
 
