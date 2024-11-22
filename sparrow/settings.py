@@ -32,7 +32,7 @@ SECRET_KEY = 'django-insecure-*ewbn#c%a@7qy6uz^gpuna3&_@cu2b$+3aejknin(l23fs9hhi
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['autorack.proxy.rlwy.net','127.0.0.1']
 
 
 # Application definition
