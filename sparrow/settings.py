@@ -23,7 +23,7 @@ if ENVIRONMENT == 'development':
 else:
     DEBUG = False
 
-ALLOWED_HOSTS = ['https://mcsparrow.ca','mcsparrow-production.up.railway.app','127.0.0.1']
+ALLOWED_HOSTS = ['https://mcsparrow.ca','mcsparrow.ca','mcsparrow-production.up.railway.app','127.0.0.1']
 CSRF_TRUSTED_ORIGINS = ['https://mcsparrow.ca','HTTPS://mcsparrow-production.up.railway.app']
 
 # Application definition
