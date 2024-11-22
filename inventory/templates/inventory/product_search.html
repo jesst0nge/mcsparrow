@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+{% include "navbar.html" %}
+<html>
+<head>
+    <title>Product Search</title>
+</head>
+<body>
+    <h1>Search Products</h1>
+    <form method="get">
+        <input type="text" name="q" value="{{ query }}" placeholder="Search products...">
+        <button type="submit">Search</button>
+    </form>
+    <ul>
+        {% for product in products %}
+            <li>
+                <a href="/inventory/{{ product.id }}/">{{ product.name }}</a> - ${{ product.price }}
+                <br>On Hand: {{ product.quantity_on_hand }} | On Order: {{ product.quantity_on_order }}
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

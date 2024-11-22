@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+{% include "navbar.html" %}
+<html>
+<head>
+    <title>{{ product.name }}</title>
+</head>
+<body>
+    <h1>{{ product.name }}</h1>
+    <p>Price: ${{ product.price }}</p>
+    <p>Category: {{ product.category.name }}</p>
+    <p>On Hand: {{ product.quantity_on_hand }}</p>
+    <p>On Order: {{ product.quantity_on_order }}</p>
+
+    {% if product.variants.exists %}
+        {% with product.variants.latest as latest_variant %}
+            <p>Date Last Received: {{ latest_variant.date_last_received|date:"Y-m-d" }}</p>
+            <p>Sold Quantity: {{ latest_variant.sold_quantity }}</p>
+        {% endwith %}
+    {% else %}
+        <p>No variants received yet.</p>
+    {% endif %}
+
+    <p>Profit: ${{ product.quantity_on_hand|floatformat:2 }}</p>
+    <a href="/inventory/search/">Back to Search</a>
+</body>
+</html>

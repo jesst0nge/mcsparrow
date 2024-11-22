@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Item</title>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const productField = document.getElementById('id_product');
+            const variantField = document.getElementById('id_variant');
+
+            productField.addEventListener('change', function () {
+                const productId = this.value;
+
+                fetch(`/inventory/api/variants/${productId}/`)
+                    .then(response => response.json())
+                    .then(data => {
+                        variantField.innerHTML = '';
+                        data.variants.forEach(variant => {
+                            const option = document.createElement('option');
+                            option.value = variant.id;
+                            option.textContent = variant.attribute;
+                            variantField.appendChild(option);
+                        });
+                    });
+            });
+        });
+    </script>
+</head>
+<body>
+    <h1>Add Item</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Add Item</button>
+    </form>
+    <a href="/inventory/">Back to Inventory</a>
+</body>
+</html>

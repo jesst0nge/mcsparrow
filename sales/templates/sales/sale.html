@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+{% include "navbar.html" %}
+<html>
+<head>
+    <title>Sale Details</title>
+</head>
+<body>
+    <h1>Sale Summary</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>Unit Price</th>
+                <th>Total Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in sale.saleitem_set.all %}
+            <tr>
+                <td>{{ item.product.name }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>${{ item.product.price }}</td>
+                <td>${{ item.total_price }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <h3>Subtotal: ${{ sale.subtotal }}</h3>
+    <h3>GST (5%): ${{ sale.gst }}</h3>
+    <h3>PST (7%): ${{ sale.pst }}</h3>
+    <h2>Total: ${{ sale.total_price }}</h2>
+    <a href="/sales/new/">Create Another Sale</a>
+</body>
+</html>

@@ -1,0 +1,23 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>New Sale</title>
+</head>
+<body>
+    {% include "navbar.html" %}
+    <h1>Create a New Sale</h1>
+    <form method="post">
+        {% csrf_token %}
+        <ul>
+            {% for product in products %}
+                <li>
+                    <label>{{ product.name }} ({{ product.stock }} available)</label>
+                    <input type="number" name="quantity_{{ product.id }}" min="0" max="{{ product.stock }}">
+                </li>
+            {% endfor %}
+        </ul>
+        <button type="submit">Submit Sale</button>
+    </form>
+</body>
+</html>

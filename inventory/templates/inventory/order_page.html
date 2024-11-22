@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+{% include "navbar.html" %}
+<html>
+<head>
+    <title>Order Page</title>
+</head>
+<body>
+    <h1>New Order</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <label for="vendor">Vendor:</label>
+        <select name="vendor" id="vendor">
+            {% for vendor in vendors %}
+                <option value="{{ vendor }}">{{ vendor }}</option>
+            {% endfor %}
+        </select>
+        <br>
+        <label for="sales_rep">Sales Rep:</label>
+        <input type="text" name="sales_rep" id="sales_rep">
+        <br>
+        <label for="order_date">Order Date:</label>
+        <input type="date" name="order_date" value="{{ today }}">
+        <br>
+        <label for="delivery_date">Delivery Date:</label>
+        <input type="date" name="delivery_date">
+        <br>
+        <label for="product_search">Search Products:</label>
+        <input type="text" name="product_search" placeholder="Search for products...">
+        <button type="button">Search</button>
+        <br>
+        <label for="discount_percent">Discount (%):</label>
+        <input type="number" name="discount_percent">
+        <br>
+        <label for="shipping_cost">Shipping Cost:</label>
+        <input type="number" name="shipping_cost">
+        <br>
+        <label for="invoice">Upload Invoice:</label>
+        <input type="file" name="invoice" id="invoice">
+        <br>
+        <button type="submit">Submit Order</button>
+    </form>
+</body>
+</html>
