@@ -1,14 +1,17 @@
 <!DOCTYPE html>
-{% include "navbar.html" %}
+{% extends 'base.html' %}
+{% block content %}
 {% load static %}
 <html>
 <head>
     <title>Inventory Home</title>
 </head>
 <body>
-    <h1>Welcome to the Inventory Management Page</h1>
+    <h1>McSporties Inventory</h1>
     <ul>
         <li><a href="/inventory/search/">Search Products</a></li>
+        <a href="" class="btn btn-success">New Order</a>
     </ul>
 </body>
 </html>
+{% endblock %}

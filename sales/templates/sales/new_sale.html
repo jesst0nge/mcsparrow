@@ -1,11 +1,11 @@
-
+{% extends 'base.html' %}
+{% block content %}
 <!DOCTYPE html>
 <html>
 <head>
     <title>New Sale</title>
 </head>
 <body>
-    {% include "navbar.html" %}
     <h1>Create a New Sale</h1>
     <form method="post">
         {% csrf_token %}

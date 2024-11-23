@@ -10,7 +10,13 @@
 <div class="card mb-3">
   <div class="row g-0">
     <div class="col-md-4">
-      <img src="{{ product.image.url }}" class="img-fluid rounded-start" alt="...">
+      <select id="category">
+        {% for category in categories %}
+            <option value="{{ category.id }}">{{ category.name }}</option>
+          </select>
+          <select id="subcategory1"></select>
+          <select id="subcategory2"></select> 
+        {% endfor %}
     </div>
     <div class="col-md-8">
       <div class="card-body">
@@ -62,8 +68,33 @@
   </div>
 </div>
 </div>
-        	
+
+
+      	
 
 <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+
+<script>
+  $('#category').change(function() {
+      var categoryId = $(this).val();
+      $.getJSON('/subcategories/' + categoryId, function(data) {
+          $('#subcategory1').empty();
+          data.forEach(function(sub) {
+              $('#subcategory1').append('<option value="' + sub.id + '">' + sub.name + '</option>');
+          });
+      });
+  });
+
+  $('#subcategory1').change(function() {
+      var subCategory1Id = $(this).val();
+      $.getJSON('/subcategories_level2/' + subCategory1Id, function(data) {
+          $('#subcategory2').empty();
+          data.forEach(function(sub) {
+              $('#subcategory2').append('<option value="' + sub.id + '">' + sub.name + '</option>');
+          });
+      });
+  });
+</script>
+
 
 {% endblock %}

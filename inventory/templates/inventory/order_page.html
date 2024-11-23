@@ -1,5 +1,5 @@
-<!DOCTYPE html>
-{% include "navbar.html" %}
+{% extends 'base.html' %}
+{% block content %}
 <html>
 <head>
     <title>Order Page</title>
@@ -16,7 +16,10 @@
         </select>
         <br>
         <label for="sales_rep">Sales Rep:</label>
-        <input type="text" name="sales_rep" id="sales_rep">
+        <select name="sales_rep" id="sales_rep">
+        {% for sales_rep in sales_reps %}
+        <option value="{{ vendor }}">{{ vendor }}</option>
+            {% endfor %}
         <br>
         <label for="order_date">Order Date:</label>
         <input type="date" name="order_date" value="{{ today }}">
@@ -41,3 +44,5 @@
     </form>
 </body>
 </html>
+
+{% endblock %}

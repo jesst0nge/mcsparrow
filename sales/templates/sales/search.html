@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<!-- Header-->
+<header class="bg-dark py-1">
+    <div class="container px-2 px-lg-5 my-5">
+        <div class="text-center text-white">
+            <h1 class="display-4 fw-bolder">Search Products</h1>
+            <p class="lead fw-normal text-white-50 mb-0">Find What You're Looking For...</p>
+        </div>
+    </div>
+</header>
+
+<div class="container">
+    <div class="row">
+        <div class="col-5">
+            <br/><br/>
+            <div class="card">
+                <div class="card-header">
+                    Search Products
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{% url 'sales:search' %}">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <input type="text" class="form-control" placeholder="Search For Products" name="searched">
+                        </div>
+                        <button type="submit" class="btn btn-secondary">
+                            Search Products
+                        </button>
+                    </form>
+                </div>
+            </div>
+            <br/><br/>
+            <br/><br/>
+        </div>
+{% if searched %}
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th scope="col">Product Name</th>
+                <th scope="col">Price</th>
+                <th scope="col">Sale Price</th>
+                <th scope="col">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for product in searched %}
+                <tr>
+                    <td>{{ product.name }}</td>
+                    <td>
+                        {% if product.is_sale %}
+                            <strike>${{ product.price }}</strike>
+                        {% else %}
+                            ${{ product.price }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if product.is_sale %}
+                            ${{ product.sale_price }}
+                        {% else %}
+                            ${{ product.price }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a class="btn btn-outline-dark" href="{% url 'sales:product' product.id %}">View</a>
+                        <button type="button" value="{{ product.id }}" class="btn btn-secondary" id="add-cart">Add To Cart</button>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>No products found.</p>
+{% endif %}
+
+        </div>
+    </div>
+</div>
+
+<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+
+<script>
+    $(document).ready(function(){
+        // Get the search query from the template
+        var query = '{{ query|escapejs }}';  // Use Django's escapejs filter to safely handle special characters
+        
+        // Check if there's a matching product in the search results
+        {% for product in searched %}
+            var productName = '{{ product.name|escapejs }}';
+
+            // If the product name matches the search query, automatically add it to the cart
+            if (productName.toLowerCase() === query.toLowerCase()) {
+                var productId = '{{ product.id }}';  // Get the product ID
+                var productQty = 1;  // Set a default quantity (can adjust if needed)
+            }
+        {% endfor %}
+    });
+</script>
+
+
+    
+{% endblock %}

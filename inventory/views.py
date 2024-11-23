@@ -3,10 +3,10 @@ from .models import *
 from .models import ProductVariant, Order
 from django.db import transaction
 from .forms import ItemForm
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.contrib import messages
-
-
+from django.template.loader import get_template
+from weasyprint import HTML
 
 def category_summary(request):
 	categories = Category.objects.all()
@@ -26,10 +26,20 @@ def category(request, foo):
 		messages.success(request, ("That Category Doesn't Exist..."))
 		return redirect('home')
 
+from django.http import JsonResponse
+
+def subcategories(request, category_id):
+    subcategories = SubCategory1.objects.filter(category_id=category_id).values('id', 'name')
+    return JsonResponse(list(subcategories), safe=False)
+
+def subcategories_level2(request, subcategory1_id):
+    subcategories = SubCategory2.objects.filter(sub_category1_id=subcategory1_id).values('id', 'name')
+    return JsonResponse(list(subcategories), safe=False)
+
 def product_search(request):
     query = request.GET.get('q', '')
     products = Item.objects.filter(name__icontains=query) if query else Item.objects.all()
-    return render(request, 'inventory/product_search.html', {'item': products, 'query': query})
+    return render(request, 'product_search.html', {'item': products, 'query': query})
 
 
 def product_page(request, product_id):
@@ -76,3 +86,25 @@ def api_get_variants(request, product_id):
     variants = ProductVariant.objects.filter(product_id=product_id)
     data = {'variants': [{'id': v.id, 'attribute': v.attribute} for v in variants]}
     return JsonResponse(data)
+
+
+def add_label(request):
+    if request.method == 'POST':
+        form = LabelForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('ticket_view')  # Redirect to ticket page
+    else:
+        form = LabelForm()
+    return render(request, 'label_form.html', {'form': form})
+
+def print_ticket(request):
+    template = get_template('ticket.html')
+    html = template.render({'data': 'Example Data'})
+    pdf = HTML(string=html).write_pdf()
+    response = HttpResponse(pdf, content_type='application/pdf')
+    response['Content-Disposition'] = 'inline; filename="ticket.pdf"'
+    return response
+
+def done_button(request):
+    return redirect('invenntory_home')

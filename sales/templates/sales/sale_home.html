@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+{% include "navbar.html" %}
+{% load static %}
+<html>
+<head>
+    <title>Inventory Home</title>
+</head>
+<body>
+    <h1>Welcome to the Inventory Management Page</h1>
+    <ul>
+        <a href="{% url 'new_sale' %}" class="btn btn-success">New Order</a>
+    </ul>
+</body>
+</html>

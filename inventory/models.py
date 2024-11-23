@@ -2,6 +2,7 @@ from django.db import models
 from django.utils.timezone import now
 from django.db.models import Sum
 from django.apps import apps
+
 # Category for organizing products
 class Category(models.Model):
     name = models.CharField(max_length=100)
@@ -9,6 +10,28 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
+class SubCategory1(models.Model):
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    name = models.CharField(max_length=100)
+
+class SubCategory2(models.Model):
+    sub_category1 = models.ForeignKey(SubCategory1, on_delete=models.CASCADE)
+    name = models.CharField(max_length=100)
+
+class Vendor(models.Model):
+    name = models.CharField(max_length=200)
+
+class SalesRep(models.Model):
+    name = models.CharField(max_length=200)
+    email = models.EmailField(blank=True, null=True)
+    phone = models.CharField(max_length=20, blank=True, null=True)
+    vendor = models.ManyToManyField('Vendor', related_name="vendor", blank=True)
+
+class Brand(models.Model):
+    name = models.CharField(max_length=200)
+    vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE)
+    rep = models.ManyToManyField('SalesRep', related_name="rep", blank=True)
+    b2b = models.URLField(blank=True, null=True)
 # Product with variants
 class Product(models.Model):
     name = models.CharField(max_length=200)
@@ -16,7 +39,9 @@ class Product(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2)
     stock = models.PositiveIntegerField(default=0)
     image = models.ImageField(upload_to='uploads/product/', default='')
-
+    # Reverse relationship (Optional) if not yet established
+    items = models.ManyToManyField('Item', related_name="product_variants", blank=True)    
+    
     def quantity_on_hand(self):
         return sum(variant.received_quantity() - variant.sold_quantity() for variant in self.variants.all())
 
@@ -32,14 +57,16 @@ class Product(models.Model):
 class ProductVariant(models.Model):
     product = models.ForeignKey(Product, related_name="variants", on_delete=models.CASCADE)
     attribute = models.CharField(max_length=100)  # e.g., "Color: Red, Size: M"
-    initial_quantity = models.PositiveIntegerField(default=0)
-    
-    # Add Sale Stuff
+    details = models.CharField(max_length=100)  # e.g., "Color: Red, Size: M"
+    sparrownumber = models.CharField(default=1)
+    barcode = models.ImageField(upload_to='uploads/product/', default='')
+    upc = models.IntegerField(default=1)
+    lightspeedid = models.IntegerField(default=1)
+    initial_quantity = models.PositiveIntegerField(default=0)    
+# Add Sale Stuff
     is_sale = models.BooleanField(default=False)
     sale_price = models.DecimalField(default=0, decimal_places=2, max_digits=6)
-    
-    # Reverse relationship (Optional) if not yet established
-    #items = models.ManyToManyField(Item, related_name="product_variants", blank=True)
+# Add Purchase Stuff
 
     def on_order_quantity(self):
         return max(0, self.initial_quantity - self.received_quantity)
@@ -116,4 +143,13 @@ class Item(models.Model):
 
     def __str__(self):
         return f"{self.product.name} ({self.variant.attribute}) - Quantity: {self.on_hand}"
+
+class Label(models.Model):
+    item = models.ForeignKey('Product', on_delete=models.CASCADE, related_name='labels')  # Refers to the Product model
+    brand = models.ForeignKey('Brand', on_delete=models.CASCADE, related_name='labels')  # Refers to the Brand model
+    price = models.DecimalField(max_digits=10, decimal_places=2)  # Direct price field (not ForeignKey to Product)
+    barcode = models.CharField(max_length=50)  # Direct barcode field (not ForeignKey to Product)
+
+    def __str__(self):
+        return f"{self.brand.name}: {self.item.name} - {self.price} - {self.barcode}"
 

@@ -7,10 +7,9 @@ app_name = 'inventory'
 urlpatterns = [
     path('', inventory_home, name='inventory_home'),  # Default inventory route
     path('<int:product_id>/', views.product_page, name='product_page'),
-    #path('search/', product_search, name='search'),
-    #path('<int:product_id>/', product_page, name='product'),
     path('add-item/', add_item, name='add_item'),
     path('api/variants/<int:product_id>/', api_get_variants, name='api_get_variants'),
-    path('search/', views.search_view, name='search'),
+    path('search/', views.product_search, name='inventory'),
+    path('order/', views.order_page, name='order'),
 ]
 

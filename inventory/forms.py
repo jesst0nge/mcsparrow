@@ -1,5 +1,12 @@
 from django import forms
-from .models import Product, ProductVariant, Item
+from .models import Product, ProductVariant, Item, Label
+
+
+class LabelForm(forms.ModelForm):
+    class Meta:
+        model = Label
+        fields = ['brand', 'item', 'price', 'barcode']
+
 
 class ItemForm(forms.ModelForm):
     class Meta:
