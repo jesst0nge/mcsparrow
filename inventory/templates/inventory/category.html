@@ -7,8 +7,10 @@
         <header class="bg-dark py-5">
             <div class="container px-4 px-lg-5 my-5">
                 <div class="text-center text-white">
-                    <h1 class="display-4 fw-bolder">McSparrow</h1>
-                    <p class="lead fw-normal text-white-50 mb-0">Look Good, Feel Good, Ski Good.</p>
+                    <h1 class="display-4 fw-bolder">
+                    {{ category }}
+                </h1>
+                    <p class="lead fw-normal text-white-50 mb-0">Category Page</p>
                 </div>
             </div>
         </header>
@@ -19,8 +21,8 @@
             
                 <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
                         
-                {% for id in productvariant %}
-                    {% if productvariant.is_sale %}
+                {% for product in products %}
+                    {% if product.is_sale %}
                     
                     <div class="col mb-5">
                         <div class="card h-100">
@@ -28,7 +30,7 @@
                             <div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">Sale</div>
 
                             <!-- Product image-->
-                            <img class="card-img-top" src="{{ productvariant.image.url }}" alt="..." />
+                            <img class="card-img-top" src="{{ product.image.url }}" alt="..." />
                             <!-- Product details-->
                             <div class="card-body p-4">
                                 <div class="text-center">
@@ -46,7 +48,7 @@
                                     ${{ product.price }}
                                     </strike>
                                     &nbsp;
-                                    ${{ productvariant.sale_price }}
+                                    ${{ product.sale_price }}
                                 </div>
                             </div>
                             <!-- Product actions-->

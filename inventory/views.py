@@ -1,15 +1,34 @@
 from django.shortcuts import render, redirect
-from .models import Product
+from .models import *
 from django.shortcuts import get_object_or_404
 from .models import ProductVariant, Order
 from django.db import transaction
 from .forms import ItemForm
 from django.http import JsonResponse
+from django.contrib import messages
+
+def category_summary(request):
+	categories = Category.objects.all()
+ 
+	return render(request, 'category_summary.html', {"categories":categories})
+
+def category(request, foo):
+	# Replace Hyphens with Spaces
+	foo = foo.replace('-', ' ')
+	# Grab the category from the url
+	try:
+		# Look Up The Category
+		category = Category.objects.get(name=foo)
+		products = Item.objects.filter(category=category)
+		return render(request, 'category.html', {'item':products, 'category':category})
+	except:
+		messages.success(request, ("That Category Doesn't Exist..."))
+		return redirect('home')
 
 def product_search(request):
     query = request.GET.get('q', '')
-    products = Product.objects.filter(name__icontains=query) if query else Product.objects.all()
-    return render(request, 'inventory/product_search.html', {'products': products, 'query': query})
+    products = Item.objects.filter(name__icontains=query) if query else Item.objects.all()
+    return render(request, 'inventory/product_search.html', {'item': products, 'query': query})
 
 
 def product_page(request, product_id):

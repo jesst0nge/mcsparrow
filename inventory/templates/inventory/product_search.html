@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+{% extends 'base.html' %}
 {% include "navbar.html" %}
 <html>
 <head>
@@ -13,8 +14,8 @@
     <ul>
         {% for product in products %}
             <li>
-                <a href="/inventory/{{ product.id }}/">{{ product.name }}</a> - ${{ product.price }}
-                <br>On Hand: {{ product.quantity_on_hand }} | On Order: {{ product.quantity_on_order }}
+                <a href="/inventory/{{ productvariant.id }}/">{{ productvariant.attribute }}</a> - ${{ productvariant.sale_price }}
+                <br>On Hand: {{ productvariant.quantity_on_hand }} | On Order: {{ productvariant.quantity_on_order }}
             </li>
         {% endfor %}
     </ul>
