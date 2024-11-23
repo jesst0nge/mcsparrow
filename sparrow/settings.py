@@ -25,8 +25,7 @@ else:
 
 ALLOWED_HOSTS = ['https://mcsparrow.ca','mcsparrow.ca','mcsparrow-production.up.railway.app','127.0.0.1']
 CSRF_TRUSTED_ORIGINS = ['https://mcsparrow.ca','HTTPS://mcsparrow-production.up.railway.app']
-
-# Application definition
+CORS_ALLOW_ALL_ORIGINS = ['HTTPS://mcsparrow-production.up.railway.app']# Application definition
 
 INSTALLED_APPS = [
     'django.contrib.admin',
