@@ -11,6 +11,6 @@ urlpatterns = [
     #path('<int:product_id>/', product_page, name='product'),
     path('add-item/', add_item, name='add_item'),
     path('api/variants/<int:product_id>/', api_get_variants, name='api_get_variants'),
-    path('search/', views.search_view, name='search'),
+    #path('search/', views.search_view, name='search'),
 ]
 
