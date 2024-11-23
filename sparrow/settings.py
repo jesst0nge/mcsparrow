@@ -21,7 +21,7 @@ SECRET_KEY = env('SECRET_KEY')
 if ENVIRONMENT == 'development':
     DEBUG = True
 else:
-    DEBUG = False
+    DEBUG = True
 
 ALLOWED_HOSTS = ['https://mcsparrow.ca','https://www.mcsparrow.ca','mcsparrow.ca','mcsparrow-production.up.railway.app','127.0.0.1','www.mcsparrow.ca']
 CSRF_TRUSTED_ORIGINS = ['https://mcsparrow.ca','https://mcsparrow-production.up.railway.app']
