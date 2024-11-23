@@ -4,7 +4,7 @@ from .models import Product, ProductVariant, Item
 class ItemForm(forms.ModelForm):
     class Meta:
         model = Item
-        fields = ['product', 'variant', 'quantity']
+        fields = ['product', 'variant', 'on_hand']
 
     # Override the variant field to filter options based on selected product
     variant = forms.ModelChoiceField(queryset=ProductVariant.objects.none())

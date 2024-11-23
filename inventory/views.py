@@ -1,11 +1,12 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from .models import *
-from django.shortcuts import get_object_or_404
 from .models import ProductVariant, Order
 from django.db import transaction
 from .forms import ItemForm
 from django.http import JsonResponse
 from django.contrib import messages
+
+
 
 def category_summary(request):
 	categories = Category.objects.all()
@@ -32,8 +33,22 @@ def product_search(request):
 
 
 def product_page(request, product_id):
+    # Fetch the product based on its ID
     product = get_object_or_404(Product, id=product_id)
-    return render(request, 'inventory/product_page.html', {'product': product})
+    
+    # Fetch the selected variant from the GET parameters
+    selected_variant = None
+    if 'variant' in request.GET:
+        variant_id = request.GET['variant']
+        selected_variant = get_object_or_404(ProductVariant, id=variant_id)
+    
+    # Pass the product and selected_variant to the template
+    return render(
+        request,
+        'inventory/product_page.html',
+        {'product': product, 'selected_variant': selected_variant}
+    )
+
 
 def order_page(request):
     if request.method == "POST":
@@ -41,7 +56,6 @@ def order_page(request):
         pass
 
     return render(request, 'inventory/order_page.html', {'vendors': ["Vendor A", "Vendor B", "Vendor C"]})
-
 
 
 def inventory_home(request):

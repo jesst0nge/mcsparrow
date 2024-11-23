@@ -1,26 +1,112 @@
 <!DOCTYPE html>
-{% include "navbar.html" %}
-<html>
-<head>
-    <title>{{ product.name }}</title>
-</head>
-<body>
-    <h1>{{ product.name }}</h1>
-    <p>Price: ${{ product.price }}</p>
-    <p>Category: {{ product.category.name }}</p>
-    <p>On Hand: {{ product.quantity_on_hand }}</p>
-    <p>On Order: {{ product.quantity_on_order }}</p>
+{% extends 'base.html' %}
+{% block content %}
 
-    {% if product.variants.exists %}
-        {% with product.variants.latest as latest_variant %}
-            <p>Date Last Received: {{ latest_variant.date_last_received|date:"Y-m-d" }}</p>
-            <p>Sold Quantity: {{ latest_variant.sold_quantity }}</p>
-        {% endwith %}
-    {% else %}
-        <p>No variants received yet.</p>
-    {% endif %}
+<div class="container">
+    <br/>
 
-    <p>Profit: ${{ product.quantity_on_hand|floatformat:2 }}</p>
-    <a href="/inventory/search/">Back to Search</a>
-</body>
-</html>
+    <div class="card mb-3">
+        <div class="row g-0">
+            <div class="col-md-4">
+                <!-- Check if product has an image, otherwise show a placeholder image -->
+                {% if product.image %}
+                    <img src="{{ product.image.url }}" class="img-fluid rounded-start" alt="Product Image">
+                {% else %}
+                    <img src="/static/images/placeholder.png" class="img-fluid rounded-start" alt="Placeholder Image">
+                {% endif %}
+            </div>
+            <div class="col-md-8">
+                <div class="card-body">
+                    <center>
+                        <h5 class="card-title">{{ product.name }}</h5>
+                        <br/>
+                        <p class="card-text">{{ product.description }}</p>
+                        <p>Category: {{ product.category.name }}</p>
+                        
+                        {% if product.is_sale %}
+                            <div class="d-flex justify-content-center small text-warning mb-2">
+                                <div class="bi-star-fill"></div>
+                                &nbsp;&nbsp;Sale!&nbsp;&nbsp;
+                                <div class="bi-star-fill"></div>
+                            </div>
+                            <strike>${{ product.price }}</strike> &nbsp; ${{ product.sale_price }}
+                        {% else %}
+                            ${{ product.price }}
+                        {% endif %}
+
+                        <br/><br/>
+                    {% if product.variants.exists %}
+                        <form method="get" action="{% url 'inventory:product_page' product.id %}">
+                            <label for="variant">Choose a Variant:</label>
+                            <select name="variant" id="variant">
+                                {% for variant in product.variants.all %}
+                                    <option value="{{ variant.id }}" {% if variant.id == selected_variant.id %}selected{% endif %}>
+                                        {{ variant.attribute }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                            <button type="submit">Select Variant</button>
+                        </form>
+                    
+                        {% if selected_variant %}
+                            {% with selected_variant as variant %}
+                                {% if variant.items.exists %}
+                                    <p><strong>Date Last Received:</strong> {{ variant.items.first.date_last_received|date:"Y-m-d" }}</p>
+                                {% else %}
+                                    <p>No items received yet.</p>
+                                {% endif %}
+                                <p><strong>Sold Quantity:</strong> {{ variant.sold_quantity }}</p>
+                            {% endwith %}
+                        {% endif %}
+                    {% else %}
+                        <p>No variants available for this product.</p>
+                    {% endif %}
+                    
+<div class="row justify-content-center">
+            <div class="col-md-2">Quantity:</div>
+            <div class="col-md-2">
+                <select class="form-select form-select-sm" id="qty-cart">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                </select>
+            </div>
+            </div>
+            <br/>
+
+            <a href="{% url 'home' %}" class="btn btn-secondary">Home</a>
+            <button type="button" value="{{ product.id }}" class="btn btn-secondary" id="add-cart">Add To Cart</button>
+        </center>
+    </div>
+    </div>
+ </div>
+    </div>
+</div>
+
+<script>
+    // Handle Add to Cart functionality
+    $(document).on('click', '#add-cart', function(e) {
+        e.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: '{% url 'cart_add' %}',
+            data: {
+                product_id: $('#add-cart').val(),
+                product_qty: $('#qty-cart option:selected').text(),
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                action: 'post'
+            },
+            success: function(json) {
+                document.getElementById("cart_quantity").textContent = json.qty;
+                location.reload();
+            },
+            error: function(xhr, errmsg, err) {
+                console.error(errmsg);
+            }
+        });
+    });
+</script>
+
+{% endblock %}

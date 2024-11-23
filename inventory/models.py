@@ -1,13 +1,13 @@
 from django.db import models
 from django.utils.timezone import now
-
+from django.db.models import Sum
+from django.apps import apps
 # Category for organizing products
 class Category(models.Model):
     name = models.CharField(max_length=100)
 
     def __str__(self):
         return self.name
-
 
 # Product with variants
 class Product(models.Model):
@@ -28,16 +28,18 @@ class Product(models.Model):
 
 
 # Product Variants for attributes like color, size, etc.
+# Add a reverse relationship from ProductVariant to Item (if not already set up)
 class ProductVariant(models.Model):
     product = models.ForeignKey(Product, related_name="variants", on_delete=models.CASCADE)
     attribute = models.CharField(max_length=100)  # e.g., "Color: Red, Size: M"
     initial_quantity = models.PositiveIntegerField(default=0)
-    received_quantity = models.PositiveIntegerField(default=0)
-    sold_quantity = models.PositiveIntegerField(default=0)
-    date_last_received = models.DateTimeField(default=now)
+    
     # Add Sale Stuff
     is_sale = models.BooleanField(default=False)
     sale_price = models.DecimalField(default=0, decimal_places=2, max_digits=6)
+    
+    # Reverse relationship (Optional) if not yet established
+    #items = models.ManyToManyField(Item, related_name="product_variants", blank=True)
 
     def on_order_quantity(self):
         return max(0, self.initial_quantity - self.received_quantity)
@@ -47,6 +49,7 @@ class ProductVariant(models.Model):
     
     class Meta:
         get_latest_by = "date_last_received"
+
 
 
 # Orders for purchasing products
@@ -71,15 +74,46 @@ class Order(models.Model):
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     product_variant = models.ForeignKey(ProductVariant, on_delete=models.CASCADE)
-    quantity = models.PositiveIntegerField(default=0)
+    order_datercvd = models.DateTimeField(default=now)
+    order_qty = models.PositiveIntegerField(default=0)
+    rcvd_qty = models.PositiveIntegerField(default=0)
 
     def total_price(self):
         return self.quantity * self.product_variant.product.price
 
+
+
 class Item(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     variant = models.ForeignKey(ProductVariant, on_delete=models.CASCADE)
-    quantity = models.PositiveIntegerField(default=0)
+    on_hand = models.PositiveIntegerField(default=0)
+    date_last_received = models.DateTimeField(default=now)
+
+    @property
+    def received_quantity(self):
+        """
+        Calculate the sum of received quantities from related OrderItems.
+        """
+        total_received = (
+            OrderItem.objects.filter(product_variant=self.variant)
+            .aggregate(Sum('rcvd_qty'))
+            .get('rcvd_qty__sum', 0)
+        )
+        return total_received or 0
+
+    @property
+    def sold_quantity(self):
+        """
+        Calculate the sum of sold quantities from related SaleItems.
+        """
+        total_sold = (
+            apps.get_model('sales', 'SaleItem')
+            .objects.filter(item=self)
+            .aggregate(Sum('quantity'))
+            .get('quantity__sum', 0)
+)
+
 
     def __str__(self):
-        return f"{self.product.name} ({self.variant.attribute}) - Quantity: {self.quantity}"
+        return f"{self.product.name} ({self.variant.attribute}) - Quantity: {self.on_hand}"
+

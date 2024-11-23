@@ -2,7 +2,6 @@ from django.db import models
 from inventory.models import *
 from django.contrib.auth.models import User
 
-
 # Customers
 class Customer(models.Model):
     first_name = models.CharField(max_length=50)
@@ -37,6 +36,9 @@ class SaleItem(models.Model):
     sale = models.ForeignKey(Sale, on_delete=models.CASCADE)
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField()
+    
+    def __str__(self):
+        return f'{self.sale} {self.quantity} {self.item}'
 
     def total_price(self):
         return self.item.price * self.quantity

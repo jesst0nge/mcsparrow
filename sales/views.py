@@ -22,3 +22,8 @@ def new_sale(request):
         return render(request, 'sales/sale.html', {'sale': sale})
 
     return render(request, 'sales/new_sale.html', {'products': products})
+
+# sales/views.py
+def search_view(request):
+    # Your search logic here
+    return render(request, 'search.html')  # Adjust to your template
