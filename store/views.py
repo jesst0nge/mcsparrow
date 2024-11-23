@@ -10,6 +10,7 @@ from django import forms
 from django.db.models import Q
 import json
 
+
 def search(request):
 	# Determine if they filled out the form
 	if request.method == "POST":
@@ -85,10 +86,9 @@ def product(request,pk):
 	product = Product.objects.get(id=pk)
 	return render(request, 'inventory/product.html', {'inventory/product':product})
 
-
 def home(request):
-	products = Product.objects.all()
-	return render(request, 'home.html', {'products':products})
+    products = Product.objects.all()
+    return render(request, 'home.html', {'products': products})
 
 
 def about(request):
