@@ -1,6 +1,6 @@
 from pathlib import Path
 from decouple import config
-#import dj_database_url
+import dj_database_url
 from environ import Env
 env = Env()
 Env.read_env()
@@ -19,7 +19,7 @@ SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 if ENVIRONMENT == 'development':
-    DEBUG = True
+    DEBUG = False
 else:
     DEBUG = True
 
@@ -88,15 +88,14 @@ WSGI_APPLICATION = 'sparrow.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'railway',
-        'USER': 'postgres',
-        'PASSWORD': env('PASSWORD'),
-        'HOST': 'autorack.proxy.rlwy.net',
-        'PORT': '29202',
-    }
+    'default': dj_database_url.config(
+        default=env('DATABASE_URL'),  # Ensure DATABASE_URL is set in Railway environment variables
+        conn_max_age=600,  # Keep connections alive for performance
+        ssl_require=True  # Enforce SSL for security
+    )
 }
 
 
