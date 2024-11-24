@@ -1,6 +1,6 @@
 from pathlib import Path
 from decouple import config
-#import dj_database_url
+import dj_database_url
 from environ import Env
 env = Env()
 Env.read_env()
@@ -21,7 +21,7 @@ SECRET_KEY = env('SECRET_KEY')
 if ENVIRONMENT == 'development':
     DEBUG = True
 else:
-    DEBUG = True
+    DEBUG = False
 
 ALLOWED_HOSTS = ['https://mcsparrow.ca','https://www.mcsparrow.ca','mcsparrow.ca','mcsparrow-production.up.railway.app','127.0.0.1','www.mcsparrow.ca']
 CSRF_TRUSTED_ORIGINS = ['https://mcsparrow.ca','https://mcsparrow-production.up.railway.app']
@@ -89,15 +89,13 @@ WSGI_APPLICATION = 'sparrow.wsgi.application'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'railway',
-        'USER': 'postgres',
-        'PASSWORD': env('PASSWORD'),
-        'HOST': 'autorack.proxy.rlwy.net',
-        'PORT': '29202',
-    }
+    'default': dj_database_url.config(
+        default=env('DATABASE_URL'),
+        conn_max_age=600,
+        ssl_require=True
+    )
 }
+print(dj_database_url.config(default=env('DATABASE_URL')))
 
 
 
