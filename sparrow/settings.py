@@ -4,10 +4,13 @@ import dj_database_url
 from environ import Env
 import os
 import environ
-env = Env()
-Env.read_env()
-ENVIRONMENT = env('ENVIRONMENT', default='production')
 
+# Initialize environment variables
+env = environ.Env()
+environ.Env.read_env()  # Reads the .env file
+
+# Determine the environment
+ENVIRONMENT = env('ENVIRONMENT', default='development')
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -92,12 +95,7 @@ WSGI_APPLICATION = 'sparrow.wsgi.application'
 
 
 
-# Initialize environment variables
-env = environ.Env()
-environ.Env.read_env()  # Reads the .env file
 
-# Determine the environment
-ENVIRONMENT = env('ENVIRONMENT', default='development')
 
 # Use DATABASE_URL for production, DATABASE_PUBLIC_URL for local development
 if ENVIRONMENT == 'production':
