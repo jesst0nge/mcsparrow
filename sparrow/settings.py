@@ -88,31 +88,22 @@ AUTHENTICATION_BACKENDS = [
 
 
 WSGI_APPLICATION = 'sparrow.wsgi.application'
-
-
 # Database
-# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
+# Use the public database URL for local development
+database_url = env('DATABASE_URL') if ENVIRONMENT == 'production' else env('DATABASE_URL')
 
-
-
-
-
-# Use DATABASE_URL for production, DATABASE_PUBLIC_URL for local development
-if ENVIRONMENT == 'production':
-    database_url = env('DATABASE_URL')  # Internal Railway connection
-else:
-    database_url = env('DATABASE_PUBLIC_URL')  # Public connection for local dev
-
-# Configure Django database settings
+# Configure database settings
 DATABASES = {
     'default': dj_database_url.config(
         default=database_url,
-        conn_max_age=600,
-        ssl_require=True  # Ensure secure connection
+        conn_max_age=600,  # Keep connections alive
+        ssl_require=True   # Enforce SSL in production
     )
 }
 
+
 print(dj_database_url.config(default=env('DATABASE_URL')))
+print("Using database URL:", database_url)
 
 
 
