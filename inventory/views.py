@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import *
 from .models import ProductVariant, Order
 from django.db import transaction
-from .forms import ItemForm
+from .forms import ItemForm, LabelForm
 from django.http import JsonResponse, HttpResponse
 from django.contrib import messages
 from django.template.loader import get_template
