@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!-- Header-->
+<header class="bg-dark py-1">
+    <div class="container px-4 px-lg-3 my-2">
+        <div class="text-center text-white">
+            <h1 class="display-4 fw-bolder">Shopping Cart</h1>
+            <p class="lead fw-normal text-white-50 mb-0">View Your Cart...</p>
+        </div>
+    </div>
+</header>
+<br/>
+<div class="container">
+    {% if cart_items %}
+        {% for item in cart_items %}
+        
+        <div class="card mb-3">
+            <div class="row g-0">
+                <div class="col-md-8">
+                    <div class="card-body">
+                        <left>
+                        <h5 class="card-title">{{ item.name }} &nbsp;&nbsp;
+                        
+                        {% if item.is_sale %}
+                        <div class="d-flex justify-content-center small text-warning mb-2">
+                                <div class="bi-star-fill"></div>
+                                &nbsp;&nbsp;Sale!&nbsp;&nbsp;
+                                <div class="bi-star-fill"></div>
+                        </div>
+
+                        <!-- item price-->
+                        <strike>
+                        ${{ item.price }}
+                        </strike>
+                        &nbsp;
+                        ${{ item.sale_price }}
+                        
+                        {% else %}
+                            ${{ item.price }}
+                            
+                        {% endif %}
+                        
+                        <div class="row justify-content-right">
+                            <div class="col-md-2">Quantity:</div>
+                            <div class="col-md-2">
+                                <select class="form-select form-select-sm" id="select{{ item.id }}">
+                                    {% for key, value in quantities.items %}
+                                        {% if key == item.id|slugify %}
+                                    <option selected>{{ value }}</option>
+                                        {% endif %}
+                                    {% endfor %}
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Discount field -->
+                            <div class="col-md-3">
+                                <input type="text" class="form-control form-control-sm" placeholder="Enter Discount Code" id="discount{{ item.id }}">
+                            </div>
+
+                            <br/><br/>
+                        </h5>  
+                        <a href="{% url 'home' %}" class="btn btn-secondary">Home</a>
+                        <button type="button" data-index="{{ item.id }}" class="btn btn-secondary update-cart">Update</button>
+                        <button type="button" data-index="{{ item.id }}" class="btn btn-danger delete-item">Remove</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        {% endfor %}
+        <div align="right">
+            <h3>Total: ${{ totals }}</h3>
+
+            <a href="{% url 'checkout' %}" class="btn btn-success">Checkout</a>
+
+        </div>
+        <br/><br/><br/>
+    {% else %}
+        There's Nothing In Your Cart...
+        <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+    {% endif %}
+</div>
+
+<script>
+// Update Cart
+$(document).on('click', '.update-cart', function(e){
+    e.preventDefault();
+    var itemid = $(this).data('index');
+    var item_qty = $('#select' + itemid + ' option:selected').text();
+    var discount_code = $('#discount' + itemid).val(); // Get discount code
+
+    $.ajax({
+        type: 'POST',
+        url: '{% url 'cart_update' %}',
+        data: {
+            item_id: itemid,
+            item_qty: item_qty,
+            discount_code: discount_code,  // Send discount code with the request
+            csrfmiddlewaretoken: '{{ csrf_token }}',
+            action: 'post'
+        },
+        success: function(json){
+            location.reload();
+        },
+        error: function(xhr, errmsg, err){
+            console.log('Error: ' + errmsg);
+        }
+    });
+})
+
+// Delete Item From Cart
+$(document).on('click', '.delete-product', function(e){
+    e.preventDefault();
+
+    $.ajax({
+        type: 'POST',
+        url: '{% url 'cart_delete' %}',
+        data: {
+            product_id: $(this).data('index'),
+            csrfmiddlewaretoken: '{{ csrf_token }}',
+            action: 'post'
+        },
+        success: function(json){
+            location.reload();
+        },
+        error: function(xhr, errmsg, err){
+            console.log('Error: ' + errmsg);
+        }
+    });
+})
+</script>
+
+{% endblock %}
