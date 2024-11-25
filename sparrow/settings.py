@@ -47,13 +47,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'cart',
     'inventory',
     'sales',
     'allauth',
     'allauth.account',
     'whitenoise',
     'store',
-    'cart',
+    
 
 ]
 
@@ -81,6 +82,7 @@ TEMPLATES = [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
+                'cart.context_processors.cart',
                 'django.contrib.messages.context_processors.messages',
                 
             ],
