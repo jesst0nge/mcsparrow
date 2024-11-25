@@ -1,17 +1,67 @@
-<!DOCTYPE html>
 {% extends 'base.html' %}
 {% block content %}
-{% load static %}
-<html>
-<head>
-    <title>Inventory Home</title>
-</head>
-<body>
-    <h1>McSporties Inventory</h1>
-    <ul>
-        <li><a href="/inventory/search/">Search Products</a></li>
-        <a href="" class="btn btn-success">New Order</a>
-    </ul>
-</body>
-</html>
+
+<div class="container mt-4">
+    <h1 class="text-center">Inventory Dashboard</h1>
+    <div class="row">
+        <!-- Total Products -->
+        <div class="col-md-3">
+            <div class="card text-white bg-secondary mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Products</h5>
+                    <p class="card-text">{{ total_products }}</p>
+                </div>
+            </div>
+        </div>
+        <!-- Low Stock Items -->
+        <div class="col-md-3">
+            <div class="card text-white bg-secondary mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Items</h5>
+                    <p class="card-text">{{ low_stock_items }}</p>
+                </div>
+            </div>
+        </div>
+        <!-- Out of Stock -->
+        <div class="col-md-3">
+            <div class="card text-white bg-secondary mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Store</h5>
+                    <p class="card-text">{{ out_of_stock }}</p>
+                </div>
+            </div>
+        </div>
+        <!-- Total Categories -->
+        <div class="col-md-3">
+            <div class="card text-white bg-secondary mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Warehouse</h5>
+                    <p class="card-text">{{ total_categories }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Low Stock Table -->
+    <h3 class="mt-4">Inventory</h3>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Item</th>
+                <th>Location</th>
+                <th>Stock</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+            <tr>
+                <td>{{ item.item }}</td>
+                <td>{{ item.category }}</td>
+                <td>{{ item.on_hand }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
 {% endblock %}
